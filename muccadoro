@@ -140,20 +140,6 @@ on-tstp() {
    # kill(1), and <https://unix.stackexchange.com/q/139222>.  Pomodoros are not
    # interruptible.
    kill -CONT -- -$$
-   # kill -CONT $$
-   # kill -CONT $(jobs -p)
-   # kill -CONT $(ps -s $$ -o pid=)
-   # kill -CONT $(jobs -p) && wait 2>/dev/null
-   # kill -9 $(jobs -p) 2>/dev/null && wait 2>/dev/null
-   # kill -9 $(jobs -p)
-   # XXX: is the problem I have killing a child process before that processes own
-   # children?  The children get reparented and thus won't be killed.  This happens with
-   # cowsay invocations that are run in the background (in a subshell).
-   # I.e, consider `bash -c 'sleep 100 &' &`: `sleep 100` will be reparented to init.  It
-   # will no longer be part of the output of `jobs`.
-   # kill -9 $(ps -s $$ -o pid=)
-   # kill -9 $(ps --ppid $$ -o pid=)
-   # pkill -9 -P $$
    if (( state == 1 )); then
       cant-stop
    fi
