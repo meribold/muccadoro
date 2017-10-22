@@ -146,7 +146,7 @@ on-tstp() {
    # kill -CONT $(jobs -p) && wait 2>/dev/null
    # kill -9 $(jobs -p) 2>/dev/null && wait 2>/dev/null
    # kill -9 $(jobs -p)
-   # XXX: is the problem I have is killing a child process before that processes own
+   # XXX: is the problem I have killing a child process before that processes own
    # children?  The children get reparented and thus won't be killed.  This happens with
    # cowsay invocations that are run in the background (in a subshell).
    # I.e, consider `bash -c 'sleep 100 &' &`: `sleep 100` will be reparented to init.  It
