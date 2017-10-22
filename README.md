@@ -5,7 +5,7 @@ Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 
 [wikipedia]: https://en.wikipedia.org/wiki/Pomodoro_Technique
 [`figlet(6)`]: http://www.figlet.org/figlet-man.html
-[`cowsay(1)`]: TODO
+[`cowsay(1)`]: https://linux.die.net/man/1/cowsay
 [`lolcat`]: https://github.com/busyloop/lolcat
 
 ## Features
