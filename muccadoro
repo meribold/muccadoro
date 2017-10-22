@@ -1,0 +1,362 @@
+#!/usr/bin/env bash
+
+# Muccadoro - implementation of the Pomodoro Technique [1] using figlet(6), cowsay(1), and
+# optionally lolcat [2].
+
+# Features:
+# * Sends desktop notifications.
+# * Can't stop.  TSTP [3] (Ctrl-Z) is trapped; Pomodoros are uninterruptible.
+# * Traps INT [4] to make Ctrl-C abandon pomodoros.
+# * Silly mode (or is it stern?) can be enabled with `-s` (can be specified multiple
+#   times).
+# * Doesn't use `clear`, preventing the terminal from flashing.
+# * Hides the cursor.
+# * Disables echoing of stdin.
+# * Keeps the cow at the bottom of your terminal.
+# * Prints some stats when exiting: when pomodoros started and ended and the length of
+#   breaks (can be redirected to a file).
+# * Seconds are very slightly longer than customary (subject to the speed of your
+#   computer; maybe adds 10 seconds to a 25 minute pomodoro).
+#
+# FIXME:
+# * `set +m` bug.
+# * Provide a clean way to quit (probably by pressing `q`, like in less(1)).  Using Ctrl-C
+#   breaks the summary when doing something like `pomo | tee ~/pomodoros.txt`.
+# * There's an extra newline when I Ctrl-C (but not otherwise) compared to watch(1).
+#
+# TODO:
+# * Maybe log the date, at least when redirected to a file (can we find out?).
+# * Redraw when the terminal size changes?
+# * Bundle slightly modified cowfiles to make the cow move around a little (for example
+#   its legs or tail).
+# * Make the terminal sticky (i3) when its high time to start the next pomodoro.
+# * Desktop entry file.
+# * Recommend using a faster lolcat (https://github.com/jaseg/lolcat)?
+#
+# [1]: https://en.wikipedia.org/wiki/Pomodoro_Technique
+# [2]: https://github.com/busyloop/lolcat
+# [3]: https://www.gnu.org/software/libc/manual/html_node/Job-Control-Signals
+# [4]: https://www.gnu.org/software/libc/manual/html_node/Termination-Signals
+
+set -o nounset
+
+declare -i silly=1
+
+# http://mywiki.wooledge.org/BashFAQ/035#getopts
+# http://wiki.bash-hackers.org/howto/getopts_tutorial
+while getopts ':s' opt; do
+   case $opt in
+      s) (( ++silly ));;
+   esac
+done
+shift "$((OPTIND-1))" # Shift off the options and optional --.
+
+# One pomodoro lasts "$1" minutes.  The default duration is 25 minutes.
+declare -i duration=$((${1:-25}*60)) num_pomodoros=4
+
+(( silly %= 5 ))
+if (( silly )); then
+   declare -i silliness=$((2**(4-silly)))
+   # `apps` stands for appearances, of course.
+   declare -a apps=('' '-b' '-d' '-g' '-p' '-s' '-t' '-w' '-e oO' '-e Oo' '-e ><' '-e -o'
+      '-e o-' '-e >o' '-e o<')
+   num_apps=${#apps[@]}
+   cowtell() {
+      app_num=$((RANDOM % (silliness * num_apps)))
+      (( app_num >= num_apps )) && app_num=0
+      cowsay -n ${apps[app_num]}
+   }
+else
+   cowtell() {
+      cowsay -n
+   }
+fi
+
+summary=
+
+# Standard output must be a terminal.  See <https://unix.stackexchange.com/q/91638>.  Save
+# the original stdout to file descriptor 3 (see <https://unix.stackexchange.com/q/80988>).
+exec 3>&1 &>/dev/tty
+
+# Save the current terminal settings.
+stty_settings=$(stty -g)
+
+# Revert all changed terminal settings.  FIXME: restore everything from saved settings.
+trap 'tput rmcup; tput cnorm; stty $stty_settings
+      [[ $summary ]] && echo -ne "$summary" >&3' EXIT
+
+# Switch to the alternate screen.  See <https://unix.stackexchange.com/q/27941>, xterm(1),
+# terminfo(5), and <https://stackoverflow.com/q/11023929>.
+tput smcup
+
+# TODO: explain.  See
+# <http://www.unix.com/shell-programming-and-scripting/176837-bash-hide-terminal-cursor.html>.
+tput civis
+
+# Don't echo characters typed on the tty.  See <https://unix.stackexchange.com/a/28620>.
+stty -echo
+
+# Pomodoros are not interruptible!  Make the cow jump and increase the remaining time.
+# trap -- 'echo; ((seconds+=5))' TSTP
+
+# echo $-
+# FIXME.  Should do something so SIGTSTP traps work.  Doesn't work, though.  TODO: only
+# disable Ctrl-Z while the clock is ticking?
+# See <https://unix.stackexchange.com/q/137915>.
+# OK.  Job control was disabled in this shell to begin with but stays enabled in the
+# parent shell.  That's why it doesn't work.
+# set +m
+# echo $- && sleep 11
+
+# Output empty lines before the message so the message is displayed at the bottom of the
+# terminal.  See <https://stackoverflow.com/a/29314659>.  Also, instead of `clear`ing
+# (which causes flickering), pad all lines of the message with spaces all the way to the
+# right edge of the terminal, thereby overwriting any currently displayed characters.  See
+# <https://stackoverflow.com/questions/9394408>.  TODO: probably just use Bash and not
+# awk.
+pad() {
+   awk -v lines="$(tput lines)" -v cols="$(tput cols)" '
+      NR!=1 && FNR==1 { n=lines-NR; for(; n>0; n--) printf "%-"cols"s\n", "" }
+      NR==FNR { next }
+      { printf "%-"cols"s\n", $0 }' <(echo "$1"){,}
+}
+
+pp() {
+   tput cup 0 0 # TODO: explain.
+   pad "$1"
+}
+
+ppp() {
+   tput cup 0 0
+   # FIXME: probably just check once if we have lolcat.
+   pad "$1" | { lolcat 2>/dev/null || cat; }
+}
+
+declare -a lyrics
+declare -i line_index=0
+lyrics=(
+   "Can't stop, addicted to the shindig;"
+   "Chop Top, he says I'm gonna win big;"
+   "Choose not a life of imitation;"
+   "Distant cousin to the reservation;"
+   "Defunct the pistol that you pay for;"
+   "This punk, the feeling that you stay for;"
+   "In time I want to be your best friend;"
+   "East side lovers living on the west end;"
+   "Knocked out but boy you better come to;"
+   "Don't die, you know the truth as some do;"
+   "Go write your message on the pavement;"
+   "Burn so bright I wonder what the wave meant;"
+)
+
+pid=
+
+declare -i state=0
+
+# Pomodoros are not interruptible.
+cant-stop() {
+   (( state == 2 )) && return
+   state=2
+   tty_settings=$(stty -g)
+   # trap 'trap - RETURN; trap "on-int; return 1" INT; state=1; stty "$tty_settings"' RETURN
+      trap 'on-return' RETURN
+   # trap 'state=1' RETURN
+   trap '' INT
+   # trap '' INT
+      # trap 'stty $tty_settings;
+      #       trap '\''trap - INT; return 1'\'' INT
+      #       trap '\''trap - TSTP; trap - INT'\'' RETURN' RETURN
+   # trap 'trap '\''trap - INT; return 1'\'' INT' INT
+   stty susp undef
+   # trap 'trap '\''kill -CONT $(jobs -p); cant-stop'\'' TSTP' RETURN
+   # trap 'trap '\''[[ $pid ]] && kill -CONT $pid; cant-stop'\'' TSTP' RETURN
+   # trap '' TSTP
+   pp "$(cowsay -e '><' -W $(($(tput cols)-3)) ${lyrics[line_index]})"
+
+   # See <https://stackoverflow.com/a/29317830>.
+   # awk 'BEGIN{n='"$(tput lines)"'; while(getline) n--; for(;n>1;n--) print ""}' <<< "$s"
+   # FIXME: there's time that passes here.  Not good.  Partial updates look ugly.
+   # awk '{printf "%-'"$(tput cols)"'s\n", $0}' <<< "$s"
+
+   ((++line_index)); ((line_index%=${#lyrics[@]}))
+   # sleep 2
+   sleep 2 & wait $!
+   # trap 'trap '\''kill -9 $(jobs) &>/dev/null && wait &>/dev/null'\'' TSTP
+         # trap - INT' RETURN
+   stty "$tty_settings"
+   # trap 'trap - INT; return 1' INT
+}
+
+# trap 'kill -CONT $(jobs -p); cant-stop' TSTP
+
+tty_sets=$(stty -g)
+on-return() {
+   if (( state==0 )); then
+      :
+   elif (( state==1 )); then
+      # trap - RETURN
+      # trap 'on-int' INT
+      state=0
+   elif (( state==2 )); then
+      # trap - RETURN
+      trap 'on-int; return 1' INT
+      state=1
+      # stty susp 
+      # stty susp '^Z'
+      # stty "$tty_settings"
+      stty "$tty_sets"
+   else
+      :
+   fi
+}
+trap 'on-return' RETURN
+
+foo=0
+# SIGTSTP handler.
+on-tstp() {
+   # trap '' TSTP
+   # kill -CONT $(jobs -p) && wait 2>/dev/null
+   # kill -9 $(jobs -p) 2>/dev/null && wait 2>/dev/null
+   # kill -9 $(jobs -p)
+   # XXX: the problem I have is killing a child process before that processes own
+   # children.  The children get reparented and thus won't be killed.  This happens with
+   # cowsay invocations that are run in the background (in a subshell).
+   # I.e, consider `bash -c 'sleep 100 &' &`: `sleep 100` will be reparented to init.  It
+   # will no longer be part of the output of `jobs`.
+   # kill -9 $(ps -s $$ -o pid=)
+   # kill -9 $(ps --ppid $$ -o pid=)
+   # pkill -9 -P $$
+   ((foo++))
+   echo "$foo" >> ~/pomo-wtf.txt
+   if (( state == 1 )); then
+      cant-stop
+   fi
+   # trap 'on-tstp' TSTP
+}
+# Silently kill everything.  Needed b/c we run `pp ... | cowtell` in the background I
+# think.  Otherwise, weird stuff happens when holding down Ctrl-Z.  Also for getting
+# rid of any stopped `sleep` processes.  See <https://stackoverflow.com/q/81520> and
+# <https://stackoverflow.com/q/5719030> for the "silent" part.
+# trap 'kill -9 $(jobs -p) &>/dev/null && wait &>/dev/null; cant-stop' TSTP
+trap 'on-tstp' TSTP
+
+on-int() {
+   if (( state==0 )); then
+      # XXX: we aren't supposed to do this [1].
+      # [1]: http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT.
+      # FIXME: this doesn't run the EXIT trap: run it manually.
+      exit
+   elif (( state==1 )); then
+      # trap - RETURN
+      #    trap 'on-return' RETURN
+      trap 'on-int' INT
+      state=0
+   elif (( state==2 )); then
+      # trap - RETURN
+      #    trap 'on-return' RETURN
+      trap 'trap - RETURN; trap on-int INT; on-int; return 1' INT
+      state=1
+   else
+      # http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT
+      trap - INT
+      kill -INT $$
+   fi
+}
+trap 'on-int' INT
+
+pomodoro() {
+   # XXX: if a called functions sets its own RETURN trap, this on will be overridden.
+   # trap 'trap - RETURN; trap on-int INT; state=0' RETURN
+   #    trap 'on-return' RETURN
+   trap 'trap - RETURN; trap on-int INT; on-int; return 1' INT
+   state=1
+   # Clear the traps when returning.  See trap(1).
+   # trap 'trap - TSTP; trap - INT' RETURN
+   # trap 'trap - INT; state=0' RETURN
+   # trap 'trap '\''kill -9 $(jobs -p) &>/dev/null && wait &>/dev/null'\'' TSTP
+   #       trap - INT' RETURN
+   # trap 'trap - INT' RETURN
+
+   # trap 'kill -9 $(jobs -p) &>/dev/null && wait &>/dev/null; cant-stop' TSTP
+
+   # Disable Ctrl-Z.  There are many ways to achieve the same thing
+   # (https://unix.stackexchange.com/q/137915).  See
+   # <http://mywiki.wooledge.org/SignalTrap>.
+   # stty susp undef
+   # This doesn't work: `trap 'echo "Pomodoros can not be interrupted."' TSTP`
+   # trap '' TSTP
+   # This one doesn't work: `set +m`.
+   # FIXME: doesn't work.  See <https://unix.stackexchange.com/a/227825>.
+   # trap 'cant-stop || return 1' TSTP
+   # trap '[[ $pid ]] && kill -9 $pid; cant-stop || return 1' TSTP
+   # trap '[[ $pid ]] && kill -CONT $pid; cant-stop || return 1' TSTP # this one's a winner
+   # trap 'kill -CONT $(jobs -p); cant-stop' TSTP
+   # trap 'kill -CONT $$; cant-stop' TSTP
+   # trap '[[ $pid ]] && kill -CONT $pid; cant-stop' TSTP
+
+   while :; do
+      pp "$(figlet -f small "$((seconds/60)):$(printf '%02d' $((seconds%60)))" |
+            cowtell)" &
+      # Handle signals immediately, not after `sleep` exits.  See
+      # <http://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
+      sleep 1 & wait $!
+      # sleep 1 & wait
+         # sleep 1 & pid=$!
+         # wait $!
+         # pid=
+      # sleep 1
+      ((--seconds <= 0)) && break
+   done
+}
+
+flush-stdin() {
+   # See <https://superuser.com/q/276531>.
+   read -r -d '' -t 0.1 -n 1000
+}
+
+# FIXME: why `dummy` (http://wiki.bash-hackers.org/commands/builtin/read#press_any_key).
+pause() {
+   # See <http://wiki.bash-hackers.org/syntax/pe#use_an_alternate_value>.
+   read -r -n 1${1:+ -t $1}
+}
+
+for (( n=1; n<=num_pomodoros; ++n )); do
+   declare -i seconds=$duration
+   start_time=$(date +'%H:%M')
+   pomodoro || {
+      # Pomodoros are atomic.
+      pp "$(cowsay -d -W $(($(tput cols)-3)) 'You abandoned pomodoro '$n'.  Press any' \
+         'key to restart it.')"
+      pause
+      (( --n ))
+      continue
+   }
+   # if [[ -t 3 ]]; then
+      # If file descriptor 3 is a terminal, cache the stats output.
+      summary+="Pomodoro $n: $start_time to $(date +'%H:%M')\n"
+   # else
+      # Otherwise print it directly.  XXX: nice idea, but piping to something that prints
+      # to a terminal goes into this branch.
+      # echo -ne "Pomodoro $n: $start_time to $(date +'%H:%M')\n"
+   # fi
+   if (( n!=num_pomodoros )); then
+      start_time=$(date +'%s')
+      notify-send "You completed pomodoro $n.  Take a short break (3-5 minutes)."
+      # TODO: it may be nice to create this message asynchronously with `lolcat -f` since
+      # lolcat is a bit slow.  That's not a priority, though.
+      ppp "$(cowsay -e '^^' -W $(($(tput cols)-3)) 'You completed pomodoro '$n'.  Take' \
+         'a short break (3-5 minutes), then press any key to continue.')"
+      flush-stdin
+      if ! pause 180; then
+         pp "$(cowsay -w -W $(($(tput cols)-3)) 'Press any key to continue.')"
+         pause 120 || {
+            notify-send -u critical 'Time to start the next pomodoro.'; pause;
+         }
+      fi
+      # TODO: should be "about 1 minute" (singular).
+      summary+="Break: about $((($(date +'%s')-start_time+30)/60)) minutes\n"
+   fi
+done
+notify-send "You completed all $num_pomodoros pomodoros!"
+
+# vim: tw=90 sts=-1 sw=3 et
