@@ -13,11 +13,6 @@
 # * Make the terminal sticky (i3) when its high time to start the next pomodoro.
 # * Desktop entry file.
 # * Recommend using a faster lolcat (https://github.com/jaseg/lolcat)?
-#
-# [1]: https://en.wikipedia.org/wiki/Pomodoro_Technique
-# [2]: https://github.com/busyloop/lolcat
-# [3]: https://www.gnu.org/software/libc/manual/html_node/Job-Control-Signals
-# [4]: https://www.gnu.org/software/libc/manual/html_node/Termination-Signals
 
 set -o nounset
 
