@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # FIXME:
-# * `set +m` bug.
 # * Provide a clean way to quit (probably by pressing `q`, like in less(1)).  Using Ctrl-C
 #   breaks the summary when doing something like `pomo | tee ~/pomodoros.txt`.
 # * There's an extra newline when I Ctrl-C (but not otherwise) compared to watch(1).
@@ -61,10 +60,10 @@ summary=
 exec 3>&1 &>/dev/tty
 
 # Save the current terminal settings.
-stty_settings=$(stty -g)
+initial_tty_settings=$(stty -g)
 
 # Revert all changed terminal settings.  FIXME: restore everything from saved settings.
-trap 'tput rmcup; tput cnorm; stty $stty_settings
+trap 'tput rmcup; tput cnorm; stty $initial_tty_settings
       [[ $summary ]] && echo -ne "$summary" >&3' EXIT
 
 # Switch to the alternate screen.  See <https://unix.stackexchange.com/q/27941>, xterm(1),
@@ -119,16 +118,12 @@ lyrics=(
    "Burn so bright I wonder what the wave meant;"
 )
 
-pid=
-
 declare -i state=0
 
-# Pomodoros are not interruptible.
 cant-stop() {
    (( state == 2 )) && return
    state=2
    tty_settings=$(stty -g)
-   trap 'on-return' RETURN
    trap '' INT
    stty susp undef
    pp "$(cowsay -e '><' -W $(($(tput cols)-3)) ${lyrics[line_index]})"
@@ -136,51 +131,44 @@ cant-stop() {
    ((++line_index)); ((line_index%=${#lyrics[@]}))
    sleep 2 & wait $!
    stty "$tty_settings"
+   count-state
 }
 
-tty_sets=$(stty -g)
-on-return() {
-   if (( state==0 )); then
-      :
-   elif (( state==1 )); then
-      state=0
-   elif (( state==2 )); then
-      trap 'on-int; return 1' INT
-      state=1
-      # stty susp 
-      # stty susp '^Z'
-      stty "$tty_sets"
-   else
-      :
-   fi
-}
-trap 'on-return' RETURN
-
-foo=0
 # SIGTSTP handler.
 on-tstp() {
+   # Signal all processes in the process group $$ (the group leader) to continue.  See
+   # kill(1), and <https://unix.stackexchange.com/q/139222>.  Pomodoros are not
+   # interruptible.
+   kill -CONT -- -$$
+   # kill -CONT $$
+   # kill -CONT $(jobs -p)
+   # kill -CONT $(ps -s $$ -o pid=)
    # kill -CONT $(jobs -p) && wait 2>/dev/null
    # kill -9 $(jobs -p) 2>/dev/null && wait 2>/dev/null
    # kill -9 $(jobs -p)
-   # XXX: the problem I have is killing a child process before that processes own
-   # children.  The children get reparented and thus won't be killed.  This happens with
+   # XXX: is the problem I have is killing a child process before that processes own
+   # children?  The children get reparented and thus won't be killed.  This happens with
    # cowsay invocations that are run in the background (in a subshell).
    # I.e, consider `bash -c 'sleep 100 &' &`: `sleep 100` will be reparented to init.  It
    # will no longer be part of the output of `jobs`.
    # kill -9 $(ps -s $$ -o pid=)
    # kill -9 $(ps --ppid $$ -o pid=)
    # pkill -9 -P $$
-   ((foo++))
-   echo "$foo" >> ~/pomo-wtf.txt
    if (( state == 1 )); then
       cant-stop
    fi
 }
-# Silently kill everything.  Needed b/c we run `pp ... | cowtell` in the background I
-# think.  Otherwise, weird stuff happens when holding down Ctrl-Z.  Also for getting
-# rid of any stopped `sleep` processes.  See <https://stackoverflow.com/q/81520> and
-# <https://stackoverflow.com/q/5719030> for the "silent" part.
-trap 'on-tstp' TSTP
+trap on-tstp TSTP
+
+count-state() {
+   trap 'trap on-int INT; on-int; return 1' INT
+   state=1
+}
+
+dead-state() {
+   trap on-int INT
+   state=0
+}
 
 on-int() {
    if (( state==0 )); then
@@ -188,23 +176,18 @@ on-int() {
       # [1]: http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT.
       # FIXME: this doesn't run the EXIT trap: run it manually.
       exit
-   elif (( state==1 )); then
-      trap 'on-int' INT
-      state=0
-   elif (( state==2 )); then
-      trap 'trap - RETURN; trap on-int INT; on-int; return 1' INT
-      state=1
-   else
       # http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT
-      trap - INT
-      kill -INT $$
+      # trap - INT
+      # kill -INT $$
+   elif (( state==1 )); then
+      dead-state
+   elif (( state==2 )); then
+      count-state
    fi
 }
-trap 'on-int' INT
 
 pomodoro() {
-   trap 'trap - RETURN; trap on-int INT; on-int; return 1' INT
-   state=1
+   count-state
 
    while :; do
       pp "$(figlet -f small "$((seconds/60)):$(printf '%02d' $((seconds%60)))" |
