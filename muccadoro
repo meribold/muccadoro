@@ -1,23 +1,5 @@
 #!/usr/bin/env bash
 
-# Muccadoro - implementation of the Pomodoro Technique [1] using figlet(6), cowsay(1), and
-# optionally lolcat [2].
-
-# Features:
-# * Sends desktop notifications.
-# * Can't stop.  TSTP [3] (Ctrl-Z) is trapped; Pomodoros are uninterruptible.
-# * Traps INT [4] to make Ctrl-C abandon pomodoros.
-# * Silly mode (or is it stern?) can be enabled with `-s` (can be specified multiple
-#   times).
-# * Doesn't use `clear`, preventing the terminal from flashing.
-# * Hides the cursor.
-# * Disables echoing of stdin.
-# * Keeps the cow at the bottom of your terminal.
-# * Prints some stats when exiting: when pomodoros started and ended and the length of
-#   breaks (can be redirected to a file).
-# * Seconds are very slightly longer than customary (subject to the speed of your
-#   computer; maybe adds 10 seconds to a 25 minute pomodoro).
-#
 # FIXME:
 # * `set +m` bug.
 # * Provide a clean way to quit (probably by pressing `q`, like in less(1)).  Using Ctrl-C
