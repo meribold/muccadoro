@@ -12,10 +12,10 @@ Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 *   Sends desktop notifications.
 *   Can't stop.  [TSTP][] (<kbd>Ctrl</kbd>-<kbd>Z</kbd>) is trapped.  Pomodoros are
     uninterruptible.
-*   Traps [INT][] to make Ctrl-C abandon pomodoros.
+*   Traps [INT][] to make <kbd>Ctrl</kbd>-<kbd>C</kbd> abandon pomodoros.
 *   Silly mode (or is it stern?) can be enabled with `-s` (can be specified multiple
     times).
-*   Doesn't use `clear`, preventing the terminal from flashing.
+*   Avoids using `clear` so the terminal doesn't flash.
 *   Hides the cursor.
 *   Disables echoing of stdin.
 *   Keeps the cow at the bottom of your terminal.
