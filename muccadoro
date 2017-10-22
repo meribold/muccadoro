@@ -78,18 +78,6 @@ tput civis
 # Don't echo characters typed on the tty.  See <https://unix.stackexchange.com/a/28620>.
 stty -echo
 
-# Pomodoros are not interruptible!  Make the cow jump and increase the remaining time.
-# trap -- 'echo; ((seconds+=5))' TSTP
-
-# echo $-
-# FIXME.  Should do something so SIGTSTP traps work.  Doesn't work, though.  TODO: only
-# disable Ctrl-Z while the clock is ticking?
-# See <https://unix.stackexchange.com/q/137915>.
-# OK.  Job control was disabled in this shell to begin with but stays enabled in the
-# parent shell.  That's why it doesn't work.
-# set +m
-# echo $- && sleep 11
-
 # Output empty lines before the message so the message is displayed at the bottom of the
 # terminal.  See <https://stackoverflow.com/a/29314659>.  Also, instead of `clear`ing
 # (which causes flickering), pad all lines of the message with spaces all the way to the
@@ -140,52 +128,27 @@ cant-stop() {
    (( state == 2 )) && return
    state=2
    tty_settings=$(stty -g)
-   # trap 'trap - RETURN; trap "on-int; return 1" INT; state=1; stty "$tty_settings"' RETURN
-      trap 'on-return' RETURN
-   # trap 'state=1' RETURN
+   trap 'on-return' RETURN
    trap '' INT
-   # trap '' INT
-      # trap 'stty $tty_settings;
-      #       trap '\''trap - INT; return 1'\'' INT
-      #       trap '\''trap - TSTP; trap - INT'\'' RETURN' RETURN
-   # trap 'trap '\''trap - INT; return 1'\'' INT' INT
    stty susp undef
-   # trap 'trap '\''kill -CONT $(jobs -p); cant-stop'\'' TSTP' RETURN
-   # trap 'trap '\''[[ $pid ]] && kill -CONT $pid; cant-stop'\'' TSTP' RETURN
-   # trap '' TSTP
    pp "$(cowsay -e '><' -W $(($(tput cols)-3)) ${lyrics[line_index]})"
 
-   # See <https://stackoverflow.com/a/29317830>.
-   # awk 'BEGIN{n='"$(tput lines)"'; while(getline) n--; for(;n>1;n--) print ""}' <<< "$s"
-   # FIXME: there's time that passes here.  Not good.  Partial updates look ugly.
-   # awk '{printf "%-'"$(tput cols)"'s\n", $0}' <<< "$s"
-
    ((++line_index)); ((line_index%=${#lyrics[@]}))
-   # sleep 2
    sleep 2 & wait $!
-   # trap 'trap '\''kill -9 $(jobs) &>/dev/null && wait &>/dev/null'\'' TSTP
-         # trap - INT' RETURN
    stty "$tty_settings"
-   # trap 'trap - INT; return 1' INT
 }
-
-# trap 'kill -CONT $(jobs -p); cant-stop' TSTP
 
 tty_sets=$(stty -g)
 on-return() {
    if (( state==0 )); then
       :
    elif (( state==1 )); then
-      # trap - RETURN
-      # trap 'on-int' INT
       state=0
    elif (( state==2 )); then
-      # trap - RETURN
       trap 'on-int; return 1' INT
       state=1
       # stty susp 
       # stty susp '^Z'
-      # stty "$tty_settings"
       stty "$tty_sets"
    else
       :
@@ -196,7 +159,6 @@ trap 'on-return' RETURN
 foo=0
 # SIGTSTP handler.
 on-tstp() {
-   # trap '' TSTP
    # kill -CONT $(jobs -p) && wait 2>/dev/null
    # kill -9 $(jobs -p) 2>/dev/null && wait 2>/dev/null
    # kill -9 $(jobs -p)
@@ -213,13 +175,11 @@ on-tstp() {
    if (( state == 1 )); then
       cant-stop
    fi
-   # trap 'on-tstp' TSTP
 }
 # Silently kill everything.  Needed b/c we run `pp ... | cowtell` in the background I
 # think.  Otherwise, weird stuff happens when holding down Ctrl-Z.  Also for getting
 # rid of any stopped `sleep` processes.  See <https://stackoverflow.com/q/81520> and
 # <https://stackoverflow.com/q/5719030> for the "silent" part.
-# trap 'kill -9 $(jobs -p) &>/dev/null && wait &>/dev/null; cant-stop' TSTP
 trap 'on-tstp' TSTP
 
 on-int() {
@@ -229,13 +189,9 @@ on-int() {
       # FIXME: this doesn't run the EXIT trap: run it manually.
       exit
    elif (( state==1 )); then
-      # trap - RETURN
-      #    trap 'on-return' RETURN
       trap 'on-int' INT
       state=0
    elif (( state==2 )); then
-      # trap - RETURN
-      #    trap 'on-return' RETURN
       trap 'trap - RETURN; trap on-int INT; on-int; return 1' INT
       state=1
    else
@@ -247,34 +203,8 @@ on-int() {
 trap 'on-int' INT
 
 pomodoro() {
-   # XXX: if a called functions sets its own RETURN trap, this on will be overridden.
-   # trap 'trap - RETURN; trap on-int INT; state=0' RETURN
-   #    trap 'on-return' RETURN
    trap 'trap - RETURN; trap on-int INT; on-int; return 1' INT
    state=1
-   # Clear the traps when returning.  See trap(1).
-   # trap 'trap - TSTP; trap - INT' RETURN
-   # trap 'trap - INT; state=0' RETURN
-   # trap 'trap '\''kill -9 $(jobs -p) &>/dev/null && wait &>/dev/null'\'' TSTP
-   #       trap - INT' RETURN
-   # trap 'trap - INT' RETURN
-
-   # trap 'kill -9 $(jobs -p) &>/dev/null && wait &>/dev/null; cant-stop' TSTP
-
-   # Disable Ctrl-Z.  There are many ways to achieve the same thing
-   # (https://unix.stackexchange.com/q/137915).  See
-   # <http://mywiki.wooledge.org/SignalTrap>.
-   # stty susp undef
-   # This doesn't work: `trap 'echo "Pomodoros can not be interrupted."' TSTP`
-   # trap '' TSTP
-   # This one doesn't work: `set +m`.
-   # FIXME: doesn't work.  See <https://unix.stackexchange.com/a/227825>.
-   # trap 'cant-stop || return 1' TSTP
-   # trap '[[ $pid ]] && kill -9 $pid; cant-stop || return 1' TSTP
-   # trap '[[ $pid ]] && kill -CONT $pid; cant-stop || return 1' TSTP # this one's a winner
-   # trap 'kill -CONT $(jobs -p); cant-stop' TSTP
-   # trap 'kill -CONT $$; cant-stop' TSTP
-   # trap '[[ $pid ]] && kill -CONT $pid; cant-stop' TSTP
 
    while :; do
       pp "$(figlet -f small "$((seconds/60)):$(printf '%02d' $((seconds%60)))" |
@@ -282,11 +212,6 @@ pomodoro() {
       # Handle signals immediately, not after `sleep` exits.  See
       # <http://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
       sleep 1 & wait $!
-      # sleep 1 & wait
-         # sleep 1 & pid=$!
-         # wait $!
-         # pid=
-      # sleep 1
       ((--seconds <= 0)) && break
    done
 }
@@ -313,14 +238,7 @@ for (( n=1; n<=num_pomodoros; ++n )); do
       (( --n ))
       continue
    }
-   # if [[ -t 3 ]]; then
-      # If file descriptor 3 is a terminal, cache the stats output.
-      summary+="Pomodoro $n: $start_time to $(date +'%H:%M')\n"
-   # else
-      # Otherwise print it directly.  XXX: nice idea, but piping to something that prints
-      # to a terminal goes into this branch.
-      # echo -ne "Pomodoro $n: $start_time to $(date +'%H:%M')\n"
-   # fi
+   summary+="Pomodoro $n: $start_time to $(date +'%H:%M')\n"
    if (( n!=num_pomodoros )); then
       start_time=$(date +'%s')
       notify-send "You completed pomodoro $n.  Take a short break (3-5 minutes)."
