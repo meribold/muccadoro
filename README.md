@@ -65,6 +65,6 @@ muccadoro | tee -ai ~/pomodoros.txt
 
 The `-i` (`--ignore-interrupts`) flag of `tee` makes sure the summary is correctly
 processed in case the pipeline was killed with <kbd>Ctrl</kbd>-<kbd>C</kbd> (which is the
-intended way to quit when doing less that four pomodoros).
+intended way to quit when doing less than four pomodoros).
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->
