@@ -46,7 +46,7 @@ muccadoro >> ~/pomodoros.txt
 If you want to save the summary but also have it printed to stdout, use:
 
 ```bash
-pomo | tee -ai ~/pomodoros.txt
+muccadoro | tee -ai ~/pomodoros.txt
 ```
 
 The `-i` flag (`--ignore-interrupts`) makes sure the summary is correctly processed by
@@ -55,7 +55,7 @@ The `-i` flag (`--ignore-interrupts`) makes sure the summary is correctly proces
 ## TODO
 *   Provide a clean way to quit (maybe by pressing <kbd>q</kbd>, like in `less(1)`).
     Using <kbd>Ctrl</kbd>-<kbd>C</kbd> breaks the summary when using redirection like
-    `pomo | tee -a ~/pomodoros.txt`.
+    `muccadoro | tee -a ~/pomodoros.txt`.
 *   There's an extra newline when I <kbd>Ctrl</kbd>-<kbd>C</kbd> (but not otherwise)
     compared to `watch(1)`.
 *   Maybe log the date, at least when redirected to a file (can we find out?).
