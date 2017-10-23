@@ -57,9 +57,16 @@ exec 3>&1 &>/dev/tty
 # Save the current terminal settings.
 initial_tty_settings=$(stty -g)
 
-# Revert all changed terminal settings.  FIXME: restore everything from saved settings.
-trap 'tput rmcup; tput cnorm; stty $initial_tty_settings
-      [[ $summary ]] && echo -ne "$summary" >&3' EXIT
+# Revert all changed terminal settings (FIXME: restore everything from saved settings) and
+# print a summary.
+cleanup() {
+   tput rmcup
+   tput cnorm
+   stty "$initial_tty_settings"
+   [[ $summary ]] && echo -ne "$summary" >&3
+}
+
+trap cleanup EXIT
 
 # Switch to the alternate screen.  See <https://unix.stackexchange.com/q/27941>, xterm(1),
 # terminfo(5), and <https://stackoverflow.com/q/11023929>.
@@ -153,11 +160,9 @@ dead-state() {
 
 on-int() {
    if (( state==0 )); then
-      # XXX: we aren't supposed to do this [1].
-      # [1]: http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT.
-      # FIXME: this doesn't run the EXIT trap: run it manually.
+      # XXX: we are supposed to kill ourselves with SIGINT instead of using `exit`.  See
+      # <http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT>.
       exit
-      # http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT
       # trap - INT
       # kill -INT $$
    elif (( state==1 )); then
@@ -169,7 +174,6 @@ on-int() {
 
 pomodoro() {
    count-state
-
    while :; do
       pp "$(figlet -f small "$((seconds/60)):$(printf '%02d' $((seconds%60)))" |
             cowtell)" &
