@@ -26,8 +26,7 @@ Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 *   Can't stop.  [TSTP][] (<kbd>Ctrl</kbd>-<kbd>Z</kbd>) is trapped.  Pomodoros are
     uninterruptible.
 *   Traps [INT][] to make <kbd>Ctrl</kbd>-<kbd>C</kbd> abandon pomodoros.
-*   Silly mode (or is it stern?) is enabled with `-s` (can be specified multiple
-    times).
+*   Silly mode (or is it stern?) is enabled with `-s` (can be specified multiple times).
 *   Avoids using `clear` so the terminal doesn't flash.
 *   Hides the cursor.
 *   Disables echoing of stdin.
