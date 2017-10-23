@@ -191,6 +191,8 @@ for (( n=1; n<=num_pomodoros; ++n )); do
       (( --n ))
       continue
    }
+   tty_settings=$(stty -g)
+   stty susp undef
    summary+="Pomodoro $n: $start_time to $(date +'%H:%M')\n"
    if (( n!=num_pomodoros )); then
       start_time=$(date +'%s')
@@ -209,6 +211,7 @@ for (( n=1; n<=num_pomodoros; ++n )); do
       # TODO: should be "about 1 minute" (singular).
       summary+="Break: about $((($(date +'%s')-start_time+30)/60)) minutes\n"
    fi
+   stty "$tty_settings"
 done
 notify-send "You completed all $num_pomodoros pomodoros!"
 
