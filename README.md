@@ -1,7 +1,7 @@
 Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 [`cowsay(1)`][], and optionally [`lolcat`][].
 
-![Screenshot of muccadoro](/../media/screenshot.png?raw=true)
+![Screenshot of muccadoro](/../media/screenshot.png?raw=true "MOO!")
 
 [wikipedia]: https://en.wikipedia.org/wiki/Pomodoro_Technique
 [`figlet(6)`]: http://www.figlet.org/figlet-man.html
