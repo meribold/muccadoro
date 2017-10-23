@@ -34,6 +34,14 @@ Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.loca
 curl -fLo ~/bin/muccadoro https://raw.githubusercontent.com/meribold/muccadoro/master/muccadoro
 ```
 
+I recommend creating an alias such as
+
+```bash
+alias pomo='muccadoro | tee -ai ~/pomodoros.txt'
+```
+
+See "[Usage notes](#usage-notes)" for details.
+
 ## Usage notes
 
 You may want to keep a record of how many pomodoros you did and when (and for how long)
