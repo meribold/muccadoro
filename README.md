@@ -1,5 +1,5 @@
-Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
-[`cowsay(1)`][], and optionally [`lolcat`][].
+:tomato: Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
+[`cowsay(1)`][], and optionally [`lolcat`][] :cow:
 
 ![Screenshot of muccadoro](/../media/screenshot.png?raw=true "MOO!")
 
