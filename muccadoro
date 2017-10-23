@@ -144,6 +144,11 @@ dead-state() {
    state=0
 }
 
+pause-state() {
+   trap on-int INT
+   state=0
+}
+
 on-int() {
    if (( state==0 )); then
       # We are supposed to kill ourselves with SIGINT instead of using `exit`.  See
@@ -191,6 +196,7 @@ for (( n=1; n<=num_pomodoros; ++n )); do
       (( --n ))
       continue
    }
+   pause-state
    tty_settings=$(stty -g)
    stty susp undef
    summary+="Pomodoro $n: $start_time to $(date +'%H:%M')\n"
