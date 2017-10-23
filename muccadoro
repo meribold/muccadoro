@@ -189,6 +189,7 @@ for (( n=1; n<=num_pomodoros; ++n )); do
    declare -i seconds=$duration
    start_time=$(date +'%H:%M')
    pomodoro || {
+      summary+="Abandoned: $start_time to $(date +'%H:%M')\n"
       # Pomodoros are atomic.
       pp "$(cowsay -d -W $(($(tput cols)-3)) 'You abandoned pomodoro '$n'.  Press any' \
          'key to restart it.')"
