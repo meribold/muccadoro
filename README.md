@@ -19,7 +19,7 @@ Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 *   Disables echoing of stdin.
 *   Keeps the cow at the bottom of your terminal.
 *   Prints some stats when exiting: when pomodoros started and ended and the length of
-    breaks (can be redirected to a file).
+    breaks ([can be redirected to a file](#usage-notes)).
 *   Seconds are very slightly longer than customary (subject to the speed of your
     computer; maybe adds 10 seconds to a 25 minute pomodoro).
 
@@ -32,6 +32,15 @@ Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.loca
 
 ```bash
 curl -fLo ~/bin/muccadoro https://raw.githubusercontent.com/meribold/muccadoro/master/muccadoro
+```
+
+## Usage notes
+
+You may want to keep a record of how many pomodoros you did and when (and for how long)
+you took breaks.  This is supported by simply redirecting stdout:
+
+```bash
+muccadoro >> ~/pomodoros.txt
 ```
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->
