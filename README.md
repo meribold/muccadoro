@@ -62,7 +62,7 @@ The `-i` flag (`--ignore-interrupts`) makes sure the summary is correctly proces
 
 ## TODO
 *   Provide a clean way to quit (maybe by pressing <kbd>q</kbd>, like in `less(1)`).
-    Using <kbd>Ctrl</kbd>-<kbd>C</kbd> breaks the summary when using redirection like
+    Using <kbd>Ctrl</kbd>-<kbd>C</kbd> breaks the summary when using a redirection like
     `muccadoro | tee -a ~/pomodoros.txt`.
 *   There's an extra newline when I <kbd>Ctrl</kbd>-<kbd>C</kbd> (but not otherwise)
     compared to `watch(1)`.
