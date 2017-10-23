@@ -19,7 +19,7 @@ Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 *   Disables echoing of stdin.
 *   Keeps the cow at the bottom of your terminal.
 *   Prints some stats when exiting: when pomodoros started and ended and the length of
-    breaks ([can be redirected to a file](#usage-notes)).
+    breaks ([can be redirected to a file](#saving-summaries-to-a-file)).
 *   Seconds are very slightly longer than customary (subject to the speed of your
     computer; maybe adds 10 seconds to a 25 minute pomodoro).
 
@@ -40,9 +40,15 @@ I recommend creating an alias such as
 alias pomo='muccadoro | tee -ai ~/pomodoros.txt'
 ```
 
-See "[Usage notes](#usage-notes)" for details.
+See "[Saving summaries to a file](#saving-summaries-to-a-file)" for details.
 
 ## Usage notes
+
+The first positional argument is the amount of minutes one pomodoro should take (default:
+25).  If you want 20-minute pomodoros, use `muccadoro 20`, for example.  The program exits
+after four pomodoros have been completed and a longer break should be taken.
+
+### Saving summaries to a file
 
 You may want to keep a record of how many pomodoros you did and when (and for how long)
 you took breaks.  This is supported by simply redirecting stdout:
@@ -58,6 +64,7 @@ muccadoro | tee -ai ~/pomodoros.txt
 ```
 
 The `-i` flag (`--ignore-interrupts`) makes sure the summary is correctly processed by
-`tee` in case the pipeline was killed with <kbd>Ctrl</kbd>-<kbd>C</kbd>.
+`tee` in case the pipeline was killed with <kbd>Ctrl</kbd>-<kbd>C</kbd> (the intended way
+to quit when doing less that four pomodoros).
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->

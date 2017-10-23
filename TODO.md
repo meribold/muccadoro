@@ -7,6 +7,7 @@
 *   Redraw when the terminal size changes?
 *   Bundle slightly modified cowfiles to make the cow move around a little (for example
     its legs or tail).
+*   Support specifying how many pomodoros one set should contain.
 <!-- *   Make the terminal sticky (i3) when its high time to start the next pomodoro. -->
 <!-- *   Desktop entry file. -->
 <!-- *   Recommend using a faster lolcat (https://github.com/jaseg/lolcat)? -->
