@@ -1,20 +1,7 @@
 Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 [`cowsay(1)`][], and optionally [`lolcat`][].
 
-<span>
-<img src="/../media/screenshot.png?raw=true" alt="_____________________
-/  ___ _ _ _ _ _ ____ \
-| |_  ) | (_) | |__ / |
-|  / /|_  _||_  _|_ \ |
-| /___| |_(_) |_|___/ |
-\                     /
----------------------
-       \   ^__^
-        \  (-o)\_______
-           (__)\       )\/\
-               ||----w |
-               ||     ||" />
-</span>
+![Screenshot of muccadoro](/../media/screenshot.png?raw=true)
 
 [wikipedia]: https://en.wikipedia.org/wiki/Pomodoro_Technique
 [`figlet(6)`]: http://www.figlet.org/figlet-man.html
