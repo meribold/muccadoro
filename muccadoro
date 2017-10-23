@@ -1,19 +1,5 @@
 #!/usr/bin/env bash
 
-# FIXME:
-# * Provide a clean way to quit (probably by pressing `q`, like in less(1)).  Using Ctrl-C
-#   breaks the summary when doing something like `pomo | tee ~/pomodoros.txt`.
-# * There's an extra newline when I Ctrl-C (but not otherwise) compared to watch(1).
-#
-# TODO:
-# * Maybe log the date, at least when redirected to a file (can we find out?).
-# * Redraw when the terminal size changes?
-# * Bundle slightly modified cowfiles to make the cow move around a little (for example
-#   its legs or tail).
-# * Make the terminal sticky (i3) when its high time to start the next pomodoro.
-# * Desktop entry file.
-# * Recommend using a faster lolcat (https://github.com/jaseg/lolcat)?
-
 set -o nounset
 
 declare -i silly=1
