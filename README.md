@@ -63,8 +63,8 @@ If you want to save the summary but also have it printed to stdout, use:
 muccadoro | tee -ai ~/pomodoros.txt
 ```
 
-The `-i` flag (`--ignore-interrupts`) makes sure the summary is correctly processed by
-`tee` in case the pipeline was killed with <kbd>Ctrl</kbd>-<kbd>C</kbd> (the intended way
-to quit when doing less that four pomodoros).
+The `-i` (`--ignore-interrupts`) flag of `tee` makes sure the summary is correctly
+processed in case the pipeline was killed with <kbd>Ctrl</kbd>-<kbd>C</kbd> (which is the
+intended way to quit when doing less that four pomodoros).
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->
