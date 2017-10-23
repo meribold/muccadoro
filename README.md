@@ -28,6 +28,10 @@ Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 
 ## Installation
 
-TODO?
+Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.local/bin/`):
+
+```bash
+curl -fLo ~/bin/muccadoro https://raw.githubusercontent.com/meribold/muccadoro/master/muccadoro
+```
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->
