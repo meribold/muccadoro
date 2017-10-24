@@ -165,11 +165,12 @@ on-int() {
 pomodoro() {
    count-state
    while :; do
-      pp "$(figlet -f small "$((seconds/60)):$(printf '%02d' $((seconds%60)))" |
-            cowtell)" &
       # Handle signals immediately, not after `sleep` exits.  See
       # <http://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
-      sleep 1 & wait $!
+      sleep 1 &
+      pp "$(figlet -f small "$((seconds/60)):$(printf '%02d' $((seconds%60)))" |
+            cowtell)"
+      wait
       ((--seconds <= 0)) && break
    done
 }
