@@ -2,6 +2,16 @@
 
 set -o nounset -o pipefail
 
+# Before doing anything, check if the required programs are installed.  See
+# <https://stackoverflow.com/q/592620>.  Some of these can probably be reasonably assumed
+# to be present, but err on the side of caution.
+for prog in awk cowsay figlet notify-send stty tput; do
+   if ! hash "$prog" 2>/dev/null; then
+      printf 'muccadoro: %s: command not found\n' "$prog"
+      exit 127
+   fi
+done
+
 declare -i silly=1
 
 # http://mywiki.wooledge.org/BashFAQ/035#getopts
