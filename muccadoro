@@ -256,8 +256,10 @@ for (( n=1; n<=num_pomodoros; ++n )); do
             notify-send -u critical 'Time to start the next pomodoro.'; pause;
          }
       fi
-      # TODO: should be "about 1 minute" (singular).
-      summary+="Break: about $((($(date +'%s')-start_time+30)/60)) minutes\n"
+      break_duration=$((($(date +'%s')-start_time+30)/60))
+      summary+="Break: about $break_duration minute"
+      (( break_duration != 1 )) && summary+=s # plural
+      summary+='\n'
    fi
    stty "$tty_settings"
 done
