@@ -7,7 +7,7 @@ set -o nounset -o pipefail
 # to be present, but err on the side of caution.
 for prog in awk cowsay figlet notify-send stty tput; do
    if ! hash "$prog" 2>/dev/null; then
-      printf 'muccadoro: %s: command not found\n' "$prog"
+      printf 'muccadoro: %s: command not found\n' "$prog" >&2
       exit 127
    fi
 done
