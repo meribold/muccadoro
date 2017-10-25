@@ -10,9 +10,9 @@
 
 ## Features
 *   Sends desktop notifications.
-*   Can't stop.  [TSTP][] (<kbd>Ctrl</kbd>-<kbd>Z</kbd>) is trapped.  Pomodoros are
+*   Can't stop.  [SIGTSTP][] (<kbd>Ctrl</kbd>-<kbd>Z</kbd>) is trapped.  Pomodoros are
     uninterruptible.
-*   Traps [INT][] to make <kbd>Ctrl</kbd>-<kbd>C</kbd> abandon pomodoros.
+*   Traps [SIGINT][] to make <kbd>Ctrl</kbd>-<kbd>C</kbd> abandon pomodoros.
 *   Silly mode (or is it stern?) is enabled with `-s` (can be specified multiple times).
 *   Avoids using `clear` so the terminal doesn't flash.
 *   Hides the cursor.
@@ -23,8 +23,8 @@
 *   Seconds are very slightly longer than customary (subject to the speed of your
     computer; maybe adds 10 seconds to a 25 minute pomodoro).
 
-[TSTP]: https://www.gnu.org/software/libc/manual/html_node/Job-Control-Signals
-[INT]: https://www.gnu.org/software/libc/manual/html_node/Termination-Signals
+[SIGTSTP]: https://www.gnu.org/software/libc/manual/html_node/Job-Control-Signals
+[SIGINT]: https://www.gnu.org/software/libc/manual/html_node/Termination-Signals
 
 ## Installation
 
