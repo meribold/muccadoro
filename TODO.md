@@ -12,6 +12,7 @@
 *   Allow specifying how many pomodoros one set should comprise?
 *   Consider if the amount of processes that are constantly started can be reduced.  See
     <https://unix.stackexchange.com/q/169716>.
+*   Package the program for the AUR.
 <!-- *   Make the terminal sticky (i3) when its high time to start the next pomodoro. -->
 <!-- *   Desktop entry file. -->
 <!-- *   Recommend using a faster lolcat (https://github.com/jaseg/lolcat)? -->
