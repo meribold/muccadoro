@@ -14,10 +14,13 @@
     <https://unix.stackexchange.com/q/169716>.
 *   Package the program for the AUR.
 *   Add a [desktop entry file][] that starts a terminal running `muccadoro`?
+*   Add instructions for creating an [i3 keybinding][] that starts a floating terminal
+    running muccadoro (like the one I use)?
 <!-- *   Make the terminal sticky (i3) when its high time to start the next pomodoro. -->
 <!-- *   Desktop entry file. -->
 <!-- *   Recommend using a faster lolcat (https://github.com/jaseg/lolcat)? -->
 
 [desktop entry file]: https://wiki.archlinux.org/index.php/Desktop_entries
+[i3 keybinding]: https://i3wm.org/docs/userguide.html#keybindings
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->
