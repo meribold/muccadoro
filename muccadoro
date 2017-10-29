@@ -176,7 +176,7 @@ on-int() {
 
 # XXX: beware of bugs due to SIGINT (Ctrl-C) being received during the short timeframe in
 # which another function invoked by this one is executing.  The `return 1` statement of
-# the SIGINT trap will be ran in the context of the innter function.
+# the SIGINT trap will be ran in the context of the inner function.
 pomodoro() {
    count-state
    while :; do
