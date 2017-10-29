@@ -13,8 +13,11 @@
 *   Consider if the amount of processes that are constantly started can be reduced.  See
     <https://unix.stackexchange.com/q/169716>.
 *   Package the program for the AUR.
+*   Add a [desktop entry file][] that starts a terminal running `muccadoro`?
 <!-- *   Make the terminal sticky (i3) when its high time to start the next pomodoro. -->
 <!-- *   Desktop entry file. -->
 <!-- *   Recommend using a faster lolcat (https://github.com/jaseg/lolcat)? -->
+
+[desktop entry file]: https://wiki.archlinux.org/index.php/Desktop_entries
 
 <!-- vim: set tw=90 sts=-1 sw=4 et spell: -->
