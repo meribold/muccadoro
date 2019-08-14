@@ -13,6 +13,13 @@ detect_package_manager(){
 }
 
 try_to_install(){
+	case "$PATH" in
+		*WINDOWS*)
+			echo "Installer unimplemented for Windows"
+			exit
+		;;
+		*) ;;
+	esac
 	test -n "$(which $1)" && echo "$1 OK" && return
         package_manager="$(detect_package_manager)"
         case "$package_manager" in
