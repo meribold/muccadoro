@@ -20,6 +20,13 @@ detect_package_manager(){
 
 try_to_install(){
 	package_manager="$(detect_package_manager)"
+	case "$PATH" in
+		*WINDOWS*)
+			echo "Please install program $1 for Windows first"
+			exit 127
+		;;
+		*) ;;
+	esac
 	case "$package_manager" in
 		apt)
 			test -x "$(command -v sudo)" && sudo apt update || apt update
