@@ -50,7 +50,7 @@ installer(){
 		cd "$place"
 		test -x "$(command -v sudo)" && sudo curl -O "$MUCCADORO_URL" >/dev/null 2>&1 || curl -O "$MUCCADORO_URL" >/dev/null 2>&1
 		test -x "$(command -v sudo)" && sudo chmod +x muccadoro || chmod +x muccadoro
-		test -n "$(which muccadoro)" && echo "Done!" || echo "Failed. Try with sudo" >&2
+		test -n "$(which muccadoro)" && echo "Done! You have muccadoro installed now." || echo "Failed. Try with sudo" >&2
 	)
 	exit
 }
