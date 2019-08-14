@@ -1,5 +1,5 @@
 #!/bin/bash
-MUCCADORO_URL="https://raw.githubusercontent.com/meribold/muccadoro/master/muccadoro"
+MUCCADORO_URL="https://raw.githubusercontent.com/africanmx/muccadoro/master/muccadoro"
 detect_package_manager(){
         case "$SHELL" in
                 *termux*) echo apt && return; ;;
