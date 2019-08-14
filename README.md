@@ -28,6 +28,14 @@
 
 ## Installation
 
+For a quick installation just pipe the `install.sh` script to sh as follows:
+
+```bash
+curl -O https://raw.githubusercontent.com/africanmx/muccadoro/master/install.sh | sh
+```
+
+If it asks for your sudo password it is because it is installing it in a binary directory.
+
 Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.local/bin/`):
 
 ```bash
