@@ -5,10 +5,44 @@ set -o nounset -o pipefail
 # Before doing anything, check if the required programs are installed.  See
 # <https://stackoverflow.com/q/592620>.  Some of these can probably be reasonably assumed
 # to be present, but err on the side of caution.
+
+detect_package_manager(){
+	case "$SHELL" in
+		*termux*) echo apt && return; ;;
+		*) ;;
+	esac
+	test -f /etc/debian_version && echo apt && return
+	test -f /etc/redhat-release && echo yum && return
+	test -f /etc/arch-release && echo pacman && return
+	test -f /etc/gentoo-release && echo emerge && return
+	test -f /etc/SuSE-release && echo zypp && return
+}
+
+try_to_install(){
+	package_manager="$(detect_package_manager)"
+	case "$package_manager" in
+		apt)
+			test -x "$(command -v sudo)" && sudo apt update || apt update
+			test -x "$(command -v sudo)" && sudo apt -y install "$1" || apt -y install "$1"
+		;;
+		yum)
+			test -x "$(command -v sudo)" && sudo yum update || yum update
+			test -x "$(command -v sudo)" && sudo yum -y install "$1" || yum -y install "$1"
+		;;
+		pacman)
+			pacman -Su
+			yes | pacman -S -y "$@"
+		;;
+		*)
+			echo "Program $1 unavailable. Please install it first" >&2
+			exit 127
+		;;
+	esac
+}
+
 for prog in awk cowsay figlet notify-send stty tput; do
    if ! hash "$prog" 2>/dev/null; then
-      printf 'muccadoro: %s: command not found\n' "$prog" >&2
-      exit 127
+      try_to_install "$prog"
    fi
 done
 
