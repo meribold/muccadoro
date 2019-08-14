@@ -38,7 +38,7 @@ If it asks for your sudo password it is because it is installing it in a binary 
 
 By now, you should have muccadoro installed and no other step is required.
 
-### As an alternate version you can follow these steps:
+### As an alternate method you can follow these steps:
 
 Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.local/bin/`):
 
