@@ -36,6 +36,10 @@ curl -O https://raw.githubusercontent.com/africanmx/muccadoro/master/install.sh 
 
 If it asks for your sudo password it is because it is installing it in a binary directory.
 
+By now, you should have muccadoro installed and no other step is required.
+
+### As an alternate version you can follow these steps:
+
 Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.local/bin/`):
 
 ```bash
