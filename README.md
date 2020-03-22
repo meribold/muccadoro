@@ -28,11 +28,19 @@
 
 ## Installation
 
+### AUR
+
+Muccadoro is available in the AUR: <https://aur.archlinux.org/packages/muccadoro>.
+
+### Manual
+
 Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.local/bin/`):
 
 ```bash
 curl -fLo ~/bin/muccadoro https://raw.githubusercontent.com/meribold/muccadoro/master/muccadoro
 ```
+
+### Notes
 
 I recommend creating an alias such as
 
