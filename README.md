@@ -20,8 +20,6 @@
 *   Keeps the cow at the bottom of your terminal.
 *   Prints some stats when exiting: when pomodoros started and ended and the length of
     breaks ([can be redirected to a file](#saving-summaries-to-a-file)).
-*   Seconds are very slightly longer than customary (subject to the speed of your
-    computer; maybe adds 10 seconds to a 25 minute pomodoro).
 
 [SIGTSTP]: https://www.gnu.org/software/libc/manual/html_node/Job-Control-Signals
 [SIGINT]: https://www.gnu.org/software/libc/manual/html_node/Termination-Signals
