@@ -208,7 +208,7 @@ pomodoro() {
          return $fail
       fi
       wait
-      ((--seconds <= 0)) && return 0
+      ((seconds <= 0)) && return 0
    done
    return 1
 }
