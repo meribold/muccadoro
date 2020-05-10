@@ -184,6 +184,8 @@ pomodoro() {
       # <http://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
       sleep 1 &
       # See <http://mywiki.wooledge.org/BashFAQ/002>.
+      planned_end_time=$((start_time_secs + duration))
+      seconds=$((planned_end_time - $(date +'%s')))
       the_time=$((seconds/60)):$(printf '%02d' $((seconds%60)))
       # Keep in mind that almost everything causes new values to be assigned to `$?`:
       #    $ false
@@ -224,7 +226,8 @@ pause() {
 
 for (( n=1; n<=num_pomodoros; ++n )); do
    declare -i seconds=$duration
-   start_time=$(date +'%H:%M')
+   declare -i start_time_secs=$(date +'%s')
+   start_time=$(date --date "@$start_time_secs" +'%H:%M')
    pomodoro
    fail=$?
    if (( fail == 130 )); then
