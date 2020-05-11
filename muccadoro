@@ -184,7 +184,6 @@ pomodoro() {
       # <http://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
       sleep 1 &
       # See <http://mywiki.wooledge.org/BashFAQ/002>.
-      seconds=$((planned_end_time - $(date +'%s')))
       the_time=$((seconds/60)):$(printf '%02d' $((seconds%60)))
       # Keep in mind that almost everything causes new values to be assigned to `$?`:
       #    $ false
@@ -207,6 +206,7 @@ pomodoro() {
          return $fail
       fi
       wait
+      seconds=$((planned_end_time - $(date +'%s')))
       ((seconds <= 0)) && return 0
    done
    return 1
