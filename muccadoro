@@ -14,8 +14,8 @@ done
 
 declare -i silly=1
 
-# http://mywiki.wooledge.org/BashFAQ/035#getopts
-# http://wiki.bash-hackers.org/howto/getopts_tutorial
+# https://mywiki.wooledge.org/BashFAQ/035#getopts
+# https://wiki.bash-hackers.org/howto/getopts_tutorial
 while getopts ':s' opt; do
    case $opt in
       s) (( ++silly ));;
@@ -146,7 +146,7 @@ trap on-tstp TSTP
 
 count-state() {
    # 130 is the exit status for termination by Ctrl-C.  See
-   # <http://www.tldp.org/LDP/abs/html/exitcodes.html>.
+   # <https://www.tldp.org/LDP/abs/html/exitcodes.html>.
    trap 'trap on-int INT; on-int; return 130' INT
    state=1
 }
@@ -164,7 +164,7 @@ pause-state() {
 on-int() {
    if (( state==0 )); then
       # We are supposed to kill ourselves with SIGINT instead of using `exit`.  See
-      # <http://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT>.
+      # <https://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT>.
       trap - INT
       kill -INT $$
    elif (( state==1 )); then
@@ -181,9 +181,9 @@ pomodoro() {
    count-state
    while :; do
       # Handle signals immediately, not after `sleep` exits.  See
-      # <http://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
+      # <https://mywiki.wooledge.org/SignalTrap#When_is_the_signal_handled.3F>.
       sleep 1 &
-      # See <http://mywiki.wooledge.org/BashFAQ/002>.
+      # See <https://mywiki.wooledge.org/BashFAQ/002>.
       the_time=$((seconds/60)):$(printf '%02d' $((seconds%60)))
       # Keep in mind that almost everything causes new values to be assigned to `$?`:
       #    $ false
@@ -217,9 +217,9 @@ flush-stdin() {
    read -r -d '' -t 0.1 -n 1000
 }
 
-# FIXME: why `dummy` (http://wiki.bash-hackers.org/commands/builtin/read#press_any_key).
+# FIXME: why `dummy` (https://wiki.bash-hackers.org/commands/builtin/read#press_any_key).
 pause() {
-   # See <http://wiki.bash-hackers.org/syntax/pe#use_an_alternate_value>.
+   # See <https://wiki.bash-hackers.org/syntax/pe#use_an_alternate_value>.
    read -r -n 1${1:+ -t $1}
 }
 
