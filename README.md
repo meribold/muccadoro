@@ -39,6 +39,14 @@ Put `muccadoro` inside some directory in your `PATH`, e.g. `~/bin/` (or `~/.loca
 curl -fLo ~/bin/muccadoro https://raw.githubusercontent.com/meribold/muccadoro/master/muccadoro
 ```
 
+### Snap
+
+```sh
+sudo snap install muccadoro
+```
+
+Note: desktop notifications currently don't work when using the Snap package.
+
 ### Notes
 
 I recommend creating an alias such as
