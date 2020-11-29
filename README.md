@@ -45,8 +45,6 @@ curl -fLo ~/bin/muccadoro https://raw.githubusercontent.com/meribold/muccadoro/m
 sudo snap install muccadoro
 ```
 
-Note: desktop notifications currently don't work when using the Snap package.
-
 ### Notes
 
 I recommend creating an alias such as
