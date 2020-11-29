@@ -12,7 +12,6 @@
 *   Allow specifying how many pomodoros one set should comprise?
 *   Consider if the amount of processes that are constantly started can be reduced.  See
     <https://unix.stackexchange.com/q/169716>.
-*   Package the program for the AUR.
 *   Add a [desktop entry file][] that starts a terminal running `muccadoro`?
 *   Add instructions for creating an [i3 keybinding][] that starts a floating terminal
     running muccadoro (like the one I use)?
