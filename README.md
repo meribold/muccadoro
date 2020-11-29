@@ -9,6 +9,7 @@
 [`lolcat`]: https://github.com/busyloop/lolcat
 
 ## Features
+
 *   Sends desktop notifications.
 *   Can't stop.  [SIGTSTP][] (<kbd>Ctrl</kbd>-<kbd>Z</kbd>) is trapped.  Pomodoros are
     uninterruptible.
