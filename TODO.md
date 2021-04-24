@@ -7,9 +7,8 @@
 *   Redraw when the terminal size changes?
 *   Bundle slightly modified cowfiles to make the cow move around a little (for example
     its legs or tail).
-*   Support specifying how many pomodoros one set should contain.
+*   Support specifying how many pomodoros one set should comprise.
 *   Support writing summaries as Markdown or HTML?
-*   Allow specifying how many pomodoros one set should comprise?
 *   Consider if the amount of processes that are constantly started can be reduced.  See
     <https://unix.stackexchange.com/q/169716>.
 *   Add a [desktop entry file][] that starts a terminal running `muccadoro`?
