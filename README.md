@@ -56,7 +56,7 @@ I recommend creating an alias such as
 alias pomo='muccadoro | tee -ai ~/pomodoros.txt'
 ```
 
-See "[Saving summaries to a file](#saving-summaries-to-a-file)" for details.
+See "Saving summaries to a file" for details.
 
 ## Usage notes
 
