@@ -1,3 +1,6 @@
+[![](https://img.shields.io/aur/version/muccadoro?label=AUR)](https://aur.archlinux.org/packages/muccadoro)
+[![](https://snapcraft.io/muccadoro/badge.svg)](https://snapcraft.io/muccadoro)
+
 :tomato: Implementation of the [Pomodoro Technique][wikipedia] using [`figlet(6)`][],
 [`cowsay(1)`][], and optionally [`lolcat`][] :cow:
 
